@@ -1,26 +1,38 @@
 import React from "react";
 import { Routes as RouterRoutes, Route, Navigate } from "react-router";
-import { 
-  ProtectedRoute, 
-  PublicRoute, 
-  OrganizerRoute, 
-  AdminRoute 
+import {
+  PublicRoute,
+  OrganizerRoute,
+  AsistenteRoute,
 } from "../components/ProtectedRoutes";
 
 // Importar páginas
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
-import Dashboard from "../pages/Dashboard";
-import AdminPanel from "../pages/AdminPanel";
+import AdminPage from "../pages/AdminPage";
 import NotFound from "../pages/NotFound";
+import useAuthStore from "../store/authStore";
+import EventosPage from "../pages/EventosPage";
 
 function Routes() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
   return (
     <RouterRoutes>
       {/* Ruta raíz - redirige según autenticación */}
-      <Route 
-        path="/" 
-        element={<Navigate to="/eventos" replace />} 
+      <Route
+        path="/"
+        element={
+          isAuthenticated ? (
+            user.rol === "ORGANIZADOR" ? (
+              <Navigate to="/admin" replace />
+            ) : (
+              <Navigate to="/eventos" replace />
+            )
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
       />
 
       {/* Rutas públicas - solo accesibles si NO está autenticado */}
@@ -32,7 +44,7 @@ function Routes() {
           </PublicRoute>
         }
       />
-      
+
       <Route
         path="/register"
         element={
@@ -46,9 +58,9 @@ function Routes() {
       <Route
         path="/eventos"
         element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
+          <AsistenteRoute>
+            <EventosPage />
+          </AsistenteRoute>
         }
       />
 
@@ -56,36 +68,8 @@ function Routes() {
       <Route
         path="/admin"
         element={
-          <AdminRoute>
-            <AdminPanel />
-          </AdminRoute>
-        }
-      />
-
-      {/* Ruta para organizadores específicos */}
-      <Route
-        path="/organizador/*"
-        element={
           <OrganizerRoute>
-            <RouterRoutes>
-              <Route
-                path="dashboard"
-                element={<Dashboard />}
-              />
-              <Route
-                path="eventos"
-                element={
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold">Gestión de Eventos</h2>
-                    <p className="text-gray-600 mt-2">Aquí irían las funcionalidades de organizador</p>
-                  </div>
-                }
-              />
-              <Route
-                path="*"
-                element={<Navigate to="/organizador/dashboard" replace />}
-              />
-            </RouterRoutes>
+            <AdminPage />
           </OrganizerRoute>
         }
       />

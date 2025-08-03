@@ -6,7 +6,7 @@ import Routes from "./routes/Routes";
 function App() {
   return (
     <BrowserRouter>
-      <Toaster richColors position="top-right" />
+      <Toaster richColors />
       <Routes />
     </BrowserRouter>
   );
