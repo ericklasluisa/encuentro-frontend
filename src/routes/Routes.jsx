@@ -13,6 +13,7 @@ import AdminPage from "../pages/AdminPage";
 import NotFound from "../pages/NotFound";
 import useAuthStore from "../store/authStore";
 import EventosPage from "../pages/EventosPage";
+import EventoDetallePage from "../pages/EventoDetallePage";
 
 function Routes() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -60,6 +61,16 @@ function Routes() {
         element={
           <AsistenteRoute>
             <EventosPage />
+          </AsistenteRoute>
+        }
+      />
+
+      {/* Rutas protegidas - requieren autenticación */}
+      <Route
+        path="/eventos/:id"
+        element={
+          <AsistenteRoute>
+            <EventoDetallePage />
           </AsistenteRoute>
         }
       />
