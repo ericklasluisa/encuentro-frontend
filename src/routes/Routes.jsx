@@ -4,7 +4,7 @@ import {
   PublicRoute,
   OrganizerRoute,
   AsistenteRoute,
-} from "./ProtectedRoutes";
+} from "../routes/ProtectedRoutes";
 
 // Importar páginas
 import LoginPage from "../pages/LoginPage";
@@ -66,7 +66,7 @@ function Routes() {
 
       {/* Rutas de administración - solo para ORGANIZADOR */}
       <Route
-        path="/admin"
+        path="/admin/*"
         element={
           <OrganizerRoute>
             <AdminPage />
