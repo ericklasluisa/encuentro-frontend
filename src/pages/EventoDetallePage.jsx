@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import { toast } from "sonner";
 
 function EventoDetallePage() {
   const { id } = useParams();
@@ -54,7 +55,7 @@ function EventoDetallePage() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`http://localhost:8000/api/v1/eventos/${id}`, {
+        const response = await fetch(`http://ec2-13-59-51-70.us-east-2.compute.amazonaws.com:8000/api/v1/eventos/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -105,7 +106,7 @@ function EventoDetallePage() {
 
       console.log("Enviando datos de compra:", compraData);
 
-      const response = await fetch("http://localhost:8000/api/v1/boletos/comprar", {
+      const response = await fetch("http://ec2-13-59-51-70.us-east-2.compute.amazonaws.com:8000/api/v1/boletos/directo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,22 +115,21 @@ function EventoDetallePage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log("Compra exitosa:", result);
-      
-      // Mostrar mensaje de éxito
-      alert(`¡Compra exitosa! Has adquirido ${cantidadBoletos} boleto(s) para ${evento.titulo}`);
-      
-      // Redirigir a la página de eventos
-      navigate("/eventos");
+      const errorMsg = await response.text();
+      throw new Error(errorMsg || `Error ${response.status}: ${response.statusText}`);
+    }
+    
+    // Aquí leemos como texto porque el back no devuelve JSON
+    const mensaje = await response.text();
+    console.log("Compra exitosa:", mensaje);
+    
+    // Mostrar mensaje de éxito
+    toast.success(mensaje);
+    navigate("/eventos");
 
     } catch (error) {
       console.error("Error al comprar boletos:", error);
-      alert(`Error al procesar la compra: ${error.message}`);
+      toast.error(`Error al procesar la compra: ${error.message}`);
     } finally {
       setComprando(false);
     }

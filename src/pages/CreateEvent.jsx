@@ -1,19 +1,25 @@
 import { useState } from 'react';
+import { useParams, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/authStore";
+import { toast } from "sonner";
 
 export default function CreateEventUnified() {
+  const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     titulo: '',
     descripcion: '',
     fecha: '',              // yyyy-MM-dd
     aforo: '',
     precioEntrada: '',
-    estado: 'PROGRAMADO',   // ejemplo de default
+    estado: 'ACTIVO',   // ejemplo de default
     categoria: '',          // DEPORTIVO | TALLER | MUSICAL | CONGRESO | ...
     direccion: '',
     ciudad: '',
     lugar: '',              // nombre del venue
     createdAt: new Date().toISOString().slice(0, 10), // yyyy-MM-dd
-    idOrganizador: ''
+    idOrganizador: user.id
   });
 
   const [errors, setErrors] = useState({});
@@ -93,7 +99,7 @@ export default function CreateEventUnified() {
 
     try {
       // Ajusta la URL a tu endpoint real
-      const res = await fetch('http://localhost:8000/api/v1/eventos', {
+      const res = await fetch('http://ec2-13-59-51-70.us-east-2.compute.amazonaws.com:8000/api/v1/eventos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -104,11 +110,13 @@ export default function CreateEventUnified() {
         throw new Error(txt || 'Error al crear el evento');
       }
 
-      alert('¡Evento creado exitosamente!');
+      toast.success('¡Evento creado exitosamente!');
       // opcional: reset
       // setFormData({ ...formData, titulo:'', descripcion:'', ... })
+
+      navigate("/admin/dashboard"); // redirigir a dashboard o lista de eventos
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      toast.error(`Error: ${err.message}`);
     }
   };
 
@@ -209,39 +217,10 @@ export default function CreateEventUnified() {
                 onChange={handleInputChange}
                 className={`${inputBase} ${errors.estado ? inputInvalid : ''}`}
               >
-                <option value="PROGRAMADO">PROGRAMADO</option>
-                <option value="CANCELADO">CANCELADO</option>
-                <option value="FINALIZADO">FINALIZADO</option>
+                <option value="ACTIVO">ACTIVO</option>
+                <option value="INACTIVO">INACTIVO</option>
               </select>
               {errors.estado && <p className="text-red-600 text-sm mt-1">{errors.estado}</p>}
-            </label>
-
-            <label className="block">
-              <span className="text-slate-700">Created At *</span>
-              <input
-                type="date"
-                name="createdAt"
-                value={formData.createdAt}
-                onChange={handleInputChange}
-                className={`${inputBase} ${errors.createdAt ? inputInvalid : ''}`}
-              />
-              {errors.createdAt && <p className="text-red-600 text-sm mt-1">{errors.createdAt}</p>}
-            </label>
-
-            <label className="block">
-              <span className="text-slate-700">ID Organizador *</span>
-              <input
-                type="number"
-                name="idOrganizador"
-                value={formData.idOrganizador}
-                onChange={handleInputChange}
-                className={`${inputBase} ${errors.idOrganizador ? inputInvalid : ''}`}
-                min={1}
-                placeholder="Ej: 1001"
-              />
-              {errors.idOrganizador && (
-                <p className="text-red-600 text-sm mt-1">{errors.idOrganizador}</p>
-              )}
             </label>
           </div>
 

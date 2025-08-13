@@ -49,7 +49,7 @@ function EventosPage() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch("http://localhost:8000/api/v1/eventos", {
+        const response = await fetch("http://ec2-13-59-51-70.us-east-2.compute.amazonaws.com:8000/api/v1/eventos", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
