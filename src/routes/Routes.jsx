@@ -4,7 +4,7 @@ import {
   PublicRoute,
   OrganizerRoute,
   AsistenteRoute,
-} from "../components/ProtectedRoutes";
+} from "./ProtectedRoutes";
 
 // Importar páginas
 import LoginPage from "../pages/LoginPage";

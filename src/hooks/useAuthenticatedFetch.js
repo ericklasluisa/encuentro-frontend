@@ -46,5 +46,7 @@ export const publicFetch = async (endpoint, options = {}) => {
     ...options,
   };
 
+  console.log(`Public fetch to: ${apiUrl}${endpoint}`, config);
+
   return fetch(`${apiUrl}${endpoint}`, config);
 };
